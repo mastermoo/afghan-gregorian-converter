@@ -52,13 +52,19 @@
 </script>
 
 <style>
+  :global(body) {
+    background: #c2e8ce;
+  }
+
   @font-face {
     font-family: "Janna";
-    src: url("/Bahij Janna-Regular.ttf") format("truetype");
+    src: url("/Bahij-Janna-Regular.ttf") format("truetype");
   }
   main {
     display: flex;
-    height: 100vh;
+    flex-direction: column;
+    height: 70vh;
+    position: relative;
   }
   h1 {
     text-align: center;
@@ -85,24 +91,47 @@
     font-size: 2rem;
     font-family: monospace;
   }
+  .gregorian {
+    background: white;
+    padding-top: 15%;
+    height: 65%;
+  }
   .afghan {
     background: #c2e8ce;
+    height: 35%;
+  }
+
+  .convertButton-wrap {
+    margin: -30px auto 0;
   }
 
   .convertButton {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
     width: 60px;
     height: 60px;
     border-radius: 50%;
     pointer-events: none;
     border: 3px solid #ffffff;
     background-color: #f3f3f3;
+    padding: 0;
   }
 
   @media screen and (min-width: 769px) {
+    main {
+      flex-direction: row;
+      height: 100vh;
+    }
+    .afghan,
+    .gregorian {
+      height: initial;
+      padding: 0;
+    }
+    .convertButton-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+      margin: initial;
+    }
     .dateFields {
       font-size: 3rem;
     }
@@ -134,13 +163,16 @@
         bind:value={gregDay}
         placeholder="D"
         max={2}
-        on:input={calcAfghan} />
+        on:input={calcAfghan}
+        on:next={e => e.detail.$event.target.blur()} />
     </div>
   </section>
 
-  <button class="convertButton" title="اړول">
-    <img src="/circular-arrows.png" width="30" alt="convert button" />
-  </button>
+  <div class="convertButton-wrap">
+    <button class="convertButton" title="اړول">
+      <img src="/circular-arrows.png" width="30" alt="convert button" />
+    </button>
+  </div>
 
   <section class="afghan">
     <h2>لمریز هجري نيټه</h2>

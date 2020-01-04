@@ -41,8 +41,8 @@
     if (validateField($event)) {
       if ($event.target.textContent.length + 1 == max) {
         setTimeout(() => {
-          dispatch("next");
-        });
+          dispatch("next", { $event });
+        }, 25);
       }
     } else {
       $event.preventDefault();
@@ -65,6 +65,8 @@
 
 <span class="field">
   <span
+    type="text"
+    pattern="\d*"
     bind:this={field}
     contenteditable="true"
     bind:textContent={value}
