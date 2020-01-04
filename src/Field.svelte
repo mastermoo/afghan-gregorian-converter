@@ -4,8 +4,10 @@
 
   export let value;
   export let placeholder;
+  export let totalDigits;
   export let max;
 
+  let focused = false;
   let field;
 
   function isDigit($event) {
@@ -19,7 +21,7 @@
   function validateField($event) {
     return (
       isDigit($event) &&
-      (textSelected() || $event.target.textContent.length < max)
+      (textSelected() || $event.target.textContent.length < totalDigits)
     );
   }
 
@@ -37,9 +39,21 @@
     }, 1);
   }
 
+  function onFocus($event) {
+    selectAll($event);
+    focused = true;
+  }
+
   function handleInput($event) {
-    if (validateField($event)) {
-      if ($event.target.textContent.length + 1 == max) {
+    const upcomingValue = parseInt(`${value}${$event.key}`);
+    if (
+      validateField($event) &&
+      (textSelected() || !max || !value || upcomingValue <= max)
+    ) {
+      if (
+        !textSelected() &&
+        $event.target.textContent.length + 1 == totalDigits
+      ) {
         setTimeout(() => {
           dispatch("next", { $event });
         }, 25);
@@ -52,28 +66,27 @@
 
 <style>
   .field {
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     display: flex;
   }
   [contenteditable="true"] {
     outline: none;
   }
-  .field:focus {
-    border-bottom-color: inherit;
+  .field.active {
+    border-bottom-color: #039130;
   }
 </style>
 
-<span class="field">
+<span class="field" class:active={focused}>
   <span
-    type="text"
-    pattern="\d*"
     bind:this={field}
     contenteditable="true"
     bind:textContent={value}
     on:keypress={handleInput}
     on:input
-    on:focus={selectAll} />
-  {#each Array(max - value.toString().length) as i}
+    on:focus={onFocus}
+    on:blur={() => (focused = false)} />
+  {#each Array(totalDigits - value.toString().length) as i}
     <span on:click={() => field.focus()} style="color: #999">
       {placeholder}
     </span>
