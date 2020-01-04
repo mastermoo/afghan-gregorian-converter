@@ -1,6 +1,7 @@
 <script>
   import jalaali from "jalaali-js";
   import Field from "./Field.svelte";
+  import Divider from "./Divider.svelte";
 
   console.log(
     "%c Hey! You can find the source code here: https://github.com/mastermoo/afghan-gregorian-converter",
@@ -43,9 +44,11 @@
   let afgMonth = "01";
   let afgDay = "01";
 
+  let gregYearField;
   let gregMonthField;
   let gregDayField;
 
+  let afgYearField;
   let afgMonthField;
   let afgDayField;
 
@@ -55,7 +58,7 @@
       .map(digit => afghanDigitMapping[digit])
       .join("")}
       د
-    ${afghanMonthMapping[parseInt(afgMonth)]}
+    ${afghanMonthMapping[parseInt(afgMonth)] || ""}
     ${afgDay
       .split("")
       .map(digit => afghanDigitMapping[digit])
@@ -79,6 +82,8 @@
 
   function calcGreg() {
     try {
+      if (!afgYear || !afgMonth || !afgDay) return;
+
       const { gy, gm, gd } = jalaali.toGregorian(
         parseInt(afgYear),
         parseInt(afgMonth),
@@ -98,6 +103,8 @@
 <style>
   :global(body) {
     background: #c2e8ce;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
   :global(::-moz-selection) {
@@ -108,8 +115,8 @@
   }
 
   @font-face {
-    font-family: "Janna";
-    src: url("/Bahij-Janna-Regular.ttf") format("truetype");
+    font-family: "Koufiya";
+    src: url("/Bahij-Koufiya-Regular.ttf") format("truetype");
   }
   main {
     display: flex;
@@ -127,7 +134,7 @@
   h1,
   h2,
   .prettyValue {
-    font-family: "Janna";
+    font-family: "Koufiya";
     font-weight: 400;
   }
   section {
@@ -141,7 +148,7 @@
   .dateFields {
     display: flex;
     font-size: 2rem;
-    font-family: monospace;
+    font-family: "Courier New", Courier, monospace;
   }
   .gregorian {
     background: white;
@@ -154,6 +161,12 @@
   }
   .prettyValue {
     margin-top: 1rem;
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: 1px solid #039130;
+  }
+  .hidden {
+    visibility: hidden;
   }
 
   .convertButton-wrap {
@@ -215,12 +228,14 @@
     <h2>ميلادي نيټه</h2>
     <div class="dateFields">
       <Field
-        bind:value={gregYear}
-        placeholder="Y"
-        totalDigits={4}
+        bind:this={gregDayField}
+        bind:value={gregDay}
+        placeholder="D"
+        totalDigits={2}
+        max={31}
         on:input={calcAfghan}
         on:next={() => gregMonthField.focus()} />
-      <span>-</span>
+      <Divider />
       <Field
         bind:this={gregMonthField}
         bind:value={gregMonth}
@@ -228,18 +243,17 @@
         totalDigits={2}
         max={12}
         on:input={calcAfghan}
-        on:next={() => gregDayField.focus()} />
-      <span>-</span>
+        on:next={() => gregYearField.focus()} />
+      <Divider />
       <Field
-        bind:this={gregDayField}
-        bind:value={gregDay}
-        placeholder="D"
-        totalDigits={2}
-        max={31}
+        bind:this={gregYearField}
+        bind:value={gregYear}
+        placeholder="Y"
+        totalDigits={4}
         on:input={calcAfghan}
         on:next={e => e.detail.$event.target.blur()} />
     </div>
-    <p class="prettyValue">&nbsp;</p>
+    <p class="prettyValue hidden">&nbsp;</p>
   </section>
 
   <div class="convertButton-wrap">
@@ -252,12 +266,14 @@
     <h2>لمریز هجري نيټه</h2>
     <div class="dateFields">
       <Field
-        bind:value={afgYear}
-        placeholder="Y"
-        totalDigits={4}
+        bind:this={afgDayField}
+        bind:value={afgDay}
+        placeholder="D"
+        totalDigits={2}
+        max={32}
         on:input={calcGreg}
         on:next={() => afgMonthField.focus()} />
-      <span>-</span>
+      <Divider />
       <Field
         bind:this={afgMonthField}
         bind:value={afgMonth}
@@ -265,14 +281,13 @@
         totalDigits={2}
         max={12}
         on:input={calcGreg}
-        on:next={() => afgDayField.focus()} />
-      <span>-</span>
+        on:next={() => afgYearField.focus()} />
+      <Divider />
       <Field
-        bind:this={afgDayField}
-        bind:value={afgDay}
-        placeholder="D"
-        totalDigits={2}
-        max={32}
+        bind:this={afgYearField}
+        bind:value={afgYear}
+        placeholder="Y"
+        totalDigits={4}
         on:input={calcGreg}
         on:next={e => e.detail.$event.target.blur()} />
     </div>
